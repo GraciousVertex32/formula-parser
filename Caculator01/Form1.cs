@@ -69,9 +69,9 @@ namespace Caculator01
         {
             string str = textBox1.Text;
             int breakpoint=0;
-            for(int i= 0; i<=str.Length; i++)
+            for(int i= 0; i<str.Length; i++)
             {
-                if(str[i]<=9 && str[i]>=0)
+                if(str[i]<='9' && str[i]>='0')
                 {
                     tempstr1 = tempstr1 + str[i];
                 }
@@ -105,9 +105,9 @@ namespace Caculator01
                     break;
             }
             //提取第一个运算符
-            for (int i = breakpoint+1; i <= str.Length; i++)
+            for (int i = breakpoint+1; i < str.Length; i++)
             {
-                if (str[i] <= 9 && str[i] >= 0)
+                if (str[i] <= '9' && str[i] >= '0')
                 {
                     tempstr2 = tempstr2 + str[i];
                 }
@@ -119,7 +119,7 @@ namespace Caculator01
             }
             label3.Text = tempstr2;
             //提取第二组数字
-            
+            label1.Text = Basicfunction().ToString();
         }
     }
 }
