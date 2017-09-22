@@ -28,3 +28,13 @@ C:\Users\1\Documents\GitHub\Caculator\Caculator01\obj\Debug\Caculator01.csproj.G
 C:\Users\1\Documents\GitHub\Caculator\Caculator01\obj\Debug\Caculator01.csproj.CoreCompileInputs.cache
 C:\Users\1\Documents\GitHub\Caculator\Caculator01\obj\Debug\Caculator01.exe
 C:\Users\1\Documents\GitHub\Caculator\Caculator01\obj\Debug\Caculator01.pdb
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\bin\Debug\Caculator01.exe.config
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\bin\Debug\Caculator01.exe
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\bin\Debug\Caculator01.pdb
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.csprojResolveAssemblyReference.cache
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.Form1.resources
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.Properties.Resources.resources
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.csproj.GenerateResource.Cache
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.csproj.CoreCompileInputs.cache
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.exe
+C:\Users\fanff\Documents\GitHub\Calculator\Caculator01\obj\Debug\Caculator01.pdb
