@@ -9,16 +9,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Collections;
-<<<<<<< HEAD
-=======
 using System.Diagnostics;
->>>>>>> 95610671591b2e48cbaaeac795f3eb3f631dbb12
 
 namespace Caculator01
 {
     public partial class Form1 : Form
     {
-<<<<<<< HEAD
         string currentpriority = "";//当前最高计算优先级片段
         public void Priority()//优先级分拣、导出高优先级片段后导入高优先级片段的结果
         {
@@ -49,7 +45,6 @@ namespace Caculator01
         public int stringindex = 0;
         public double result = new double();
         public string str = "";
-=======
         //Data DataInstance = new Data();
 
         //实例化都放在这里了
@@ -64,7 +59,6 @@ namespace Caculator01
         //public double result = new double();
 
         #region 由Visual Studio自动生成
->>>>>>> 95610671591b2e48cbaaeac795f3eb3f631dbb12
         public Form1()
         {
             InitializeComponent();
@@ -164,18 +158,15 @@ namespace Caculator01
 
         public void Calculate()
         {
-<<<<<<< HEAD
             stringindex = 0;
             str = textBox1.Text;
             int breakpoint=0;
             while(breakpoint<str.Length)
-=======
             int index = Data.stringindex; //优化了数据控制，这里 int stringindex 换成了 int index 等效
             //string str = textBox1.Text;
             string str = Data.textBoxText; //同上优化了数据控制，所有的东西都可以在Data里面进行设定
             int breakpoint = 0;
             try
->>>>>>> 95610671591b2e48cbaaeac795f3eb3f631dbb12
             {
                 while (breakpoint < str.Length)
                 {
@@ -191,7 +182,6 @@ namespace Caculator01
                             break;
                         }
                     }
-<<<<<<< HEAD
                 }
                 stringindex++;
                 //提取第一组数字
@@ -202,14 +192,12 @@ namespace Caculator01
                     
                     chr = str[breakpoint];
                     switch (chr)
-=======
                     index++;
                     //提取第一组数字
 
                     Data.label2Text = tempstr[index - 1];
 
                     if (breakpoint < str.Length)
->>>>>>> 95610671591b2e48cbaaeac795f3eb3f631dbb12
                     {
                         char chr = new char();
                         chr = str[breakpoint];
