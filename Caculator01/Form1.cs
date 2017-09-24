@@ -8,16 +8,42 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Collections;
 
 namespace Caculator01
 {
     public partial class Form1 : Form
     {
+        string currentpriority = "";//当前最高计算优先级片段
+        public void Priority()//优先级分拣、导出高优先级片段后导入高优先级片段的结果
+        {
+            int left = 0;//左括号的索引
+            int right = 0;//右括号的索引
+            
+            while(str.Contains(")"))//循环直到式子中没有括号后停止
+            {
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (str[i] == '(') { left = i; }//找到右括号前的最后的左括号
+                    if (str[i] == ')') { right = i; break; }//找到右括号后循环停止
+                }
+                str.Remove(left, right - left + 1);//从式子中移除这个括号中的内容
+                currentpriority = str.Substring(left + 1, right - left - 1);//最高计算优先级片段为括号内内容
+                str.Insert(left,not finished yet);//从移除括号处插入括号应得的结果
+            }
+        }
+        public double formulasolver()
+        {
+           currentpriority
+        }
+        //需进行的计算按优先顺序拍好
         public string[] tempstr = new string[10];
+        public char chr = new char();
         public char method1 = 'n';
         public char method2 = 'n';
         public int stringindex = 0;
         public double result = new double();
+        public string str = "";
         public Form1()
         {
             InitializeComponent();
@@ -56,7 +82,7 @@ namespace Caculator01
         private void button4_Click(object sender, EventArgs e)
         {
             stringindex = 0;
-            string str = textBox1.Text;
+            str = textBox1.Text;
             int breakpoint=0;
             while(breakpoint<str.Length)
             {
@@ -75,10 +101,10 @@ namespace Caculator01
                 stringindex++;
                 //提取第一组数字
                 label2.Text = tempstr[stringindex-1];
-               
+                
                 if (breakpoint < str.Length)
                 {
-                    char chr = new char();
+                    
                     chr = str[breakpoint];
                     switch (chr)
                     {
@@ -107,6 +133,11 @@ namespace Caculator01
 
             label1.Text = Basicfunction().ToString();
             //调用计算函数，输出
+            for(int i=0;i<=9;i++)
+            {
+                tempstr[i] = "";
+            }
+            //初始化数组
         }
         private void button3_Click(object sender, EventArgs e)
         {
