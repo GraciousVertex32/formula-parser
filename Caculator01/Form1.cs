@@ -16,9 +16,9 @@ namespace Caculator01
     public partial class Form1 : Form
     {
 
-        List<double> Numberlist = new List<double>();
-        List<string> numberlist = new List<string>();
-        List<char> methodlist = new List<char>();
+        List<double> Numberlist = new List<double>(15);
+        List<string> numberlist = new List<string>(15);
+        List<char> methodlist = new List<char>(15);
         public char chr = new char();
         public int stringindex = 0;
         public int methodindex = 0;
@@ -50,8 +50,13 @@ namespace Caculator01
 
         public double Formulasolver()
         {
+            DataSorter();
             double exponent = 0;
-            for (int i = 0; i < methodlist.Count; i++)
+            double multiply = 0;
+            double divide = 0;
+            double add = 0;
+            double subtract = 0;
+            for (int i = 0; i < methodlist.Count; i++)//遍历所有乘方
             {
                 if(methodlist[i]=='^')//乘方方法
                 {
@@ -59,26 +64,78 @@ namespace Caculator01
                     Numberlist[i] = exponent;//将结果代入double数组，计算符号前对应数字的位置
                     for(int following =i+1;following<Numberlist.Count-1;following++)
                     {
-                        Numberlist[following] = Numberlist[following + 1];
-                    }//后方数据进一位，替换计算符号后一位
-                    Numberlist.RemoveAt(Numberlist.Count);//删除最后一位数字
+                        Numberlist[following] = Numberlist[following + 1];//后方数据进一位，替换计算符号后一位
+                        methodlist[following-1] = methodlist[following ];
+                    }
+                    Numberlist.RemoveAt(Numberlist.Count);//删除最后一位多余数字
+                    methodlist.RemoveAt(methodlist.Count);//删除最后一位多余运算符
                 }
             }
+            for (int i = 0; i < methodlist.Count; i++)//遍历所有乘除法
+            {
+                if (methodlist[i] == '*')//乘法方法
+                {
+                    multiply = Numberlist[i] * Numberlist[i + 1];
+                    for (int following = i + 1; following < Numberlist.Count - 1; following++)
+                    {
+                        Numberlist[following] = Numberlist[following + 1];
+                        methodlist[following - 1] = methodlist[following];
+                    }
+                    Numberlist.RemoveAt(Numberlist.Count);
+                    methodlist.RemoveAt(methodlist.Count);
+                }
+                if (methodlist[i] == '/')//除法方法
+                {
+                    divide= Numberlist[i] / Numberlist[i + 1];
+                    for (int following = i + 1; following < Numberlist.Count - 1; following++)
+                    {
+                        Numberlist[following] = Numberlist[following + 1];
+                        methodlist[following - 1] = methodlist[following];
+                    }
+                    Numberlist.RemoveAt(Numberlist.Count);
+                    methodlist.RemoveAt(methodlist.Count);
+                }
+            }
+            for (int i = 0; i < methodlist.Count; i++)//遍历所有加减法
+            {
+                if (methodlist[i] == '+')//加法方法
+                {
+                    add= Numberlist[i] + Numberlist[i + 1];
+                    for (int following = i + 1; following < Numberlist.Count - 1; following++)
+                    {
+                        Numberlist[following] = Numberlist[following + 1];
+                        methodlist[following - 1] = methodlist[following];
+                    }
+                    Numberlist.RemoveAt(Numberlist.Count);
+                    methodlist.RemoveAt(methodlist.Count);
+                }
+                if (methodlist[i] == '-')//减法方法
+                {
+                    subtract= Numberlist[i] - Numberlist[i + 1];
+                    for (int following = i + 1; following < Numberlist.Count - 1; following++)
+                    {
+                        Numberlist[following] = Numberlist[following + 1];
+                        methodlist[following - 1] = methodlist[following];
+                    }
+                    Numberlist.RemoveAt(Numberlist.Count);
+                    methodlist.RemoveAt(methodlist.Count);
+                }
+            }//理论上Numberlist只有第一位有数字了
+            return Numberlist[0];
         }
 
         public void DataSorter()//储存数据与符号在两个数组中
         {
             stringindex = 0;
             methodindex = 0;
-            str = currentpriority;
             int breakpoint = 0;
-            while (breakpoint < str.Length)//确保输入字符串读取完毕
+            while (breakpoint < currentpriority.Length)//确保输入字符串读取完毕
             {
-                for (int i = breakpoint; i < str.Length; i++)//从断点处继续读取
+                for (int i = breakpoint; i < currentpriority.Length; i++)//从断点处继续读取
                 {
-                    if (str[i] <= '9' && str[i] >= '0')//寻找数字
+                    if (currentpriority[i] <= '9' && currentpriority[i] >= '0')//寻找数字
                     {
-                        numberlist[stringindex] = numberlist[stringindex] + str[i];//将找到的数字存入数组中位置
+                        numberlist[stringindex] = numberlist[stringindex] + currentpriority[i];//将找到的数字存入数组中位置
                         breakpoint = i + 1;//下一位始终默认为断点
                     }
                     else
@@ -87,10 +144,10 @@ namespace Caculator01
                     }
                     stringindex++;//储存数字的数组index+1,为下一组数字做准备
                     label2.Text = numberlist[stringindex - 1];//debug用显示
-                    if (breakpoint < str.Length)//若断点未走到字符串尽头，寻找运算符
+                    if (breakpoint < currentpriority.Length)//若断点未走到字符串尽头，寻找运算符
                     {
                         char chr = new char();
-                        chr = str[breakpoint];//断点breakpoint位置为运算符应在位置
+                        chr = currentpriority[breakpoint];//断点breakpoint位置为运算符应在位置
                         switch (chr)//将此处运算符存入运算符数组
                         {
                             case '+':
@@ -124,7 +181,9 @@ namespace Caculator01
         }
         private void button4_Click(object sender, EventArgs e)
         {
-
+            str = textBox1.Text;
+            Priority();
+            label1.Text = str;
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -134,135 +193,18 @@ namespace Caculator01
         {
             //这个是从哪里冒出来的？
         }
-        #region CalculatorModule 计算器的模组，比如计算控制，基础方法控制
-        class CalculatorModule
-        {
-
-            public string[] numberlist = TempData.numberlist;
-
-
-            public double Basicfunction()
-            {
-                double temp1 = double.Parse(numberlist[0]);
-                double temp2 = double.Parse(numberlist[1]); //如果用户值键入一个字符，这里NullPointerException，需要做一个处理w
-                switch (method1)
-                {
-                    case '+':
-                        return temp1 + temp2;
-                        break;
-                    case '-':
-                        return temp1 - temp2;
-                        break;
-                    case '*':
-                        return temp1 * temp2;
-                        break;
-                    case '/':
-                        return temp1 / temp2;
-                        break;
-                    case '^':
-                        return Math.Pow(temp1, temp2);
-                        break;
-                    default:
-                        Console.WriteLine("Must be Seriously Wrong");
-                        return 55555555555;
-                        break;
-                }
-            }
-            //计算部分
-
-            public void Calculate()
-            {
-
-                while (breakpoint < str.Length)
-                    int index = Data.stringindex; //优化了数据控制，这里 int stringindex 换成了 int index 等效
-                                                  //string str = textBox1.Text;
-                string str = Data.textBoxText; //同上优化了数据控制，所有的东西都可以在Data里面进行设定
-                int breakpoint = 0;
-                try
-                {
-                    while (breakpoint < str.Length)
-                    {
-                        for (int i = breakpoint; i < str.Length; i++)
-                        {
-                            if (str[i] <= '9' && str[i] >= '0')
-                            {
-                                numberlist[index] = numberlist[index] + str[i];
-                                breakpoint = i + 1;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    stringindex++;
-                    //提取第一组数字
-                    label2.Text = numberlist[stringindex - 1];
-
-                    if (breakpoint < str.Length)
-                    {
-
-                        chr = str[breakpoint];
-                        switch (chr)
-                    index++;
-                        //提取第一组数字
-                        if (breakpoint < str.Length)
-                        {
-                            char chr = new char();
-                            chr = str[breakpoint];
-                            switch (chr)
-                            {
-                                case '+':
-                                    method1 = '+';
-                                    break;
-                                case '-':
-                                    method1 = '-';
-                                    break;
-                                case '*':
-                                    method1 = '*';
-                                    break;
-                                case '/':
-                                    method1 = '/';
-                                    break;
-                                case '^':
-                                    method1 = '^';
-                                    break;
-                                default:
-                                    Console.WriteLine("Invalid Expression");
-                                    break;
-                            }
-                        }
-                        breakpoint++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-
-                Data.label1Text = Basicfunction().ToString();
-
-                //调用计算函数，输出
-                for (int i = 0; i <= 9; i++)
-                {
-                    numberlist[i] = "";
-                }
-                //初始化数组
-            }
-        }
-        #endregion
-
+       
         #region IOControl 文件控制，比如文件传输流，文件写入和读取
         class IOControl
         {
             public void FileIODO()
             {
                 string path = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-                double result = Data.result;
+                
 
                 FileStream fs = new FileStream(path, FileMode.Create); //这里有个异常需要处理，使用try和catch解决文件检查问题
                 StreamWriter sw = new StreamWriter(fs);
-                sw.Write(result);
+                sw.Write("");
                 sw.Flush();
                 sw.Close();
                 fs.Close();
@@ -271,88 +213,6 @@ namespace Caculator01
         }
         #endregion
 
-        #region DataStorage 数据的存储，包括缓存数据和主要数据（此部分尚未测试）
-        static class TempData
-        {
-            public static string[] numberlist = new string[10];
-        }
-
-        class Data
-        {
-            public static string textBoxText = "textBox.Text";
-            //public static string textBoxText = null;
-            public static string label1Text = "label1.Text";
-            public static string label2Text = "label2.Text";
-
-            public static int stringindex = 0;
-
-            public static double result = 0;
-
-            #region 本区域下的所有方法需要优化，但是基本的东西都是可以使用的w 如果有其他建议可以写上comments
-            public static string SaveStringTo(string target, string source)
-            {
-                //save the source data to the target, accept string only
-
-                target = source;
-
-                if (source == target)
-                {
-                    return target;
-                    //return true;
-                }
-                else
-                {
-                    return target;
-                    //return false;
-                }
-            }
-
-            public static Boolean SaveDoubleTo(double target, double source)
-            {
-                //save the source data to the target, accept double only
-                target = source;
-
-                if (source == target)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            public static Boolean SaveArrayListTo(ArrayList target, ArrayList source)
-            {
-                //save the source data to the target, accept ArrayList only
-                target = source;
-
-                if (source == target)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            public static Boolean SaveInt32To(int target, int source)
-            {
-                //save the source data to the target, accept Int only
-                target = source;
-
-                if (source == target)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            #endregion
-        }
-        #endregion
+       
     }
 }
