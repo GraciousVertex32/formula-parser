@@ -41,9 +41,9 @@ namespace Caculator01
                     if (str[i] == '(') { left = i; }//找到右括号前的最后的左括号
                     if (str[i] == ')') { right = i; break; }//找到右括号后循环停止
                 }
-                str.Remove(left, right - left + 1);//从式子中移除这个括号中的内容
                 currentpriority = str.Substring(left + 1, right - left - 1);//最高计算优先级片段为括号内内容
-                str.Insert(left, Formulasolver().ToString());//从移除括号处插入括号应得的结果
+                str=str.Remove(left, right - left + 1);//从式子中移除这个括号中的内容       
+                str=str.Insert(left, Formulasolver().ToString());//从移除括号处插入括号应得的结果
             }
         }
         //处理括号
@@ -58,7 +58,7 @@ namespace Caculator01
             double subtract = 0;
             for (int i = 0; i < methodlist.Count; i++)//遍历所有乘方
             {
-                if(methodlist[i]=='^')//乘方方法
+                if(methodlist.Count != 0 && methodlist[i]=='^')//乘方方法
                 {
                     exponent = Math.Pow(Numberlist[i], Numberlist[i + 1]);//计算乘方符号前后数字的乘方
                     Numberlist[i] = exponent;//将结果代入double数组，计算符号前对应数字的位置
@@ -67,58 +67,62 @@ namespace Caculator01
                         Numberlist[following] = Numberlist[following + 1];//后方数据进一位，替换计算符号后一位
                         methodlist[following-1] = methodlist[following ];
                     }
-                    Numberlist.RemoveAt(Numberlist.Count);//删除最后一位多余数字
-                    methodlist.RemoveAt(methodlist.Count);//删除最后一位多余运算符
+                    Numberlist.RemoveAt(Numberlist.Count-1);//删除最后一位多余数字
+                    methodlist.RemoveAt(methodlist.Count-1);//删除最后一位多余运算符
                 }
             }
             for (int i = 0; i < methodlist.Count; i++)//遍历所有乘除法
             {
-                if (methodlist[i] == '*')//乘法方法
+                if (methodlist.Count != 0 && methodlist[i] == '*')//乘法方法
                 {
                     multiply = Numberlist[i] * Numberlist[i + 1];
+                    Numberlist[i] = multiply;
                     for (int following = i + 1; following < Numberlist.Count - 1; following++)
                     {
                         Numberlist[following] = Numberlist[following + 1];
                         methodlist[following - 1] = methodlist[following];
                     }
-                    Numberlist.RemoveAt(Numberlist.Count);
-                    methodlist.RemoveAt(methodlist.Count);
+                    Numberlist.RemoveAt(Numberlist.Count-1);
+                    methodlist.RemoveAt(methodlist.Count-1);
                 }
-                if (methodlist[i] == '/')//除法方法
+                if (methodlist.Count != 0 && methodlist[i] == '/')//除法方法
                 {
                     divide= Numberlist[i] / Numberlist[i + 1];
+                    Numberlist[i] = divide;
                     for (int following = i + 1; following < Numberlist.Count - 1; following++)
                     {
                         Numberlist[following] = Numberlist[following + 1];
                         methodlist[following - 1] = methodlist[following];
                     }
-                    Numberlist.RemoveAt(Numberlist.Count);
-                    methodlist.RemoveAt(methodlist.Count);
+                    Numberlist.RemoveAt(Numberlist.Count-1);
+                    methodlist.RemoveAt(methodlist.Count-1);
                 }
             }
             for (int i = 0; i < methodlist.Count; i++)//遍历所有加减法
             {
-                if (methodlist[i] == '+')//加法方法
+                if (methodlist.Count != 0 && methodlist[i] == '+')//加法方法
                 {
                     add= Numberlist[i] + Numberlist[i + 1];
+                    Numberlist[i] = add;
                     for (int following = i + 1; following < Numberlist.Count - 1; following++)
                     {
                         Numberlist[following] = Numberlist[following + 1];
                         methodlist[following - 1] = methodlist[following];
                     }
-                    Numberlist.RemoveAt(Numberlist.Count);
-                    methodlist.RemoveAt(methodlist.Count);
+                    Numberlist.RemoveAt(Numberlist.Count-1);
+                    methodlist.RemoveAt(methodlist.Count-1);
                 }
-                if (methodlist[i] == '-')//减法方法
+                if (methodlist.Count != 0&&methodlist[i] == '-')//减法方法
                 {
                     subtract= Numberlist[i] - Numberlist[i + 1];
+                    Numberlist[i] = subtract;
                     for (int following = i + 1; following < Numberlist.Count - 1; following++)
                     {
                         Numberlist[following] = Numberlist[following + 1];
                         methodlist[following - 1] = methodlist[following];
                     }
-                    Numberlist.RemoveAt(Numberlist.Count);
-                    methodlist.RemoveAt(methodlist.Count);
+                    Numberlist.RemoveAt(Numberlist.Count-1);
+                    methodlist.RemoveAt(methodlist.Count-1);
                 }
             }//理论上Numberlist只有第一位有数字了
             return Numberlist[0];
@@ -129,6 +133,32 @@ namespace Caculator01
             stringindex = 0;
             methodindex = 0;
             int breakpoint = 0;
+            int numberamount = 0;
+            for (int i = 0; i < currentpriority.Length; i++)//确定当前片段数字的量
+            {
+                if(
+                    currentpriority[i] == '+' ||
+                    currentpriority[i] == '-' ||
+                    currentpriority[i] == '*' ||
+                    currentpriority[i] == '/' ||
+                    currentpriority[i] == '^'
+                    )
+                {
+                    numberamount++;
+                }
+            }
+            numberlist.Clear();
+            Numberlist.Clear();
+            methodlist.Clear();
+            for (int i=0;i< numberamount+1;i++)//数字list初始化
+            {
+                numberlist.Add("");
+                Numberlist.Add(0);
+            }
+            for (int i = 0; i <numberamount; i++)//运算符list初始化
+            {
+                methodlist.Add('n');
+            }
             while (breakpoint < currentpriority.Length)//确保输入字符串读取完毕
             {
                 for (int i = breakpoint; i < currentpriority.Length; i++)//从断点处继续读取
@@ -141,18 +171,19 @@ namespace Caculator01
                     else
                     {
                         break;//遇到非数字退出寻找数字循环
-                    }
-                    stringindex++;//储存数字的数组index+1,为下一组数字做准备
-                    label2.Text = numberlist[stringindex - 1];//debug用显示
-                    if (breakpoint < currentpriority.Length)//若断点未走到字符串尽头，寻找运算符
+                    }                 
+                }
+                stringindex++;//储存数字的数组index+1,为下一组数字做准备
+                label2.Text = numberlist[stringindex - 1];//debug用显示
+                if (breakpoint < currentpriority.Length)//若断点未走到字符串尽头，寻找运算符
+                {
+                    char chr = new char();
+                    chr = currentpriority[breakpoint];//断点breakpoint位置为运算符应在位置
+                    switch (chr)//将此处运算符存入运算符数组
                     {
-                        char chr = new char();
-                        chr = currentpriority[breakpoint];//断点breakpoint位置为运算符应在位置
-                        switch (chr)//将此处运算符存入运算符数组
-                        {
-                            case '+':
-                                methodlist[methodindex] = '+';
-                                break;
+                        case '+':
+                            methodlist[methodindex] = '+';
+                            break;
                             case '-':
                                 methodlist[methodindex] = '-';
                                 break;
@@ -168,11 +199,11 @@ namespace Caculator01
                             default:
                                 MessageBox.Show("Invalid Input");
                                 break;
-                        }
-                        methodindex++;//储存运算符的数组index+1,为下一个运算符做准备
                     }
-                    breakpoint++;//记录运算符后断点位置+1
+                    methodindex++;//储存运算符的数组index+1,为下一个运算符做准备
                 }
+                breakpoint++;//记录运算符后断点位置+1
+                
             }
             for(int i=0;i<numberlist.Count;i++)//将string数组转换成double数组
             {
