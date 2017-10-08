@@ -19,12 +19,13 @@ namespace Caculator01
         List<double> Numberlist = new List<double>(15);
         List<string> numberlist = new List<string>(15);
         List<char> methodlist = new List<char>(15);
-        public char chr = new char();
-        public int stringindex = 0;
-        public int methodindex = 0;
-        public double result = new double();
-        public string str = "";
+        public char chr = new char();//储存当前运算符
+        public int stringindex = 0;//式子的索引
+        public int methodindex = 0;//计算符的索引
+        public double result = new double();//保存结果
+        public string str = "";//储存，操作输入的字符串
         public string currentpriority = "";//当前最高计算优先级片段
+
         public Form1()
         {
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace Caculator01
             double subtract = 0;
             for (int i = 0; i < methodlist.Count; i++)//遍历所有乘方
             {
-                if(methodlist.Count != 0 && methodlist[i]=='^')//乘方方法
+                if(i < methodlist.Count && methodlist[i]=='^')//乘方方法
                 {
                     exponent = Math.Pow(Numberlist[i], Numberlist[i + 1]);//计算乘方符号前后数字的乘方
                     Numberlist[i] = exponent;//将结果代入double数组，计算符号前对应数字的位置
@@ -73,7 +74,7 @@ namespace Caculator01
             }
             for (int i = 0; i < methodlist.Count; i++)//遍历所有乘除法
             {
-                if (methodlist.Count != 0 && methodlist[i] == '*')//乘法方法
+                if (i < methodlist.Count && methodlist[i] == '*')//乘法方法
                 {
                     multiply = Numberlist[i] * Numberlist[i + 1];
                     Numberlist[i] = multiply;
@@ -85,7 +86,7 @@ namespace Caculator01
                     Numberlist.RemoveAt(Numberlist.Count-1);
                     methodlist.RemoveAt(methodlist.Count-1);
                 }
-                if (methodlist.Count != 0 && methodlist[i] == '/')//除法方法
+                if (i<methodlist.Count && methodlist[i] == '/')//除法方法
                 {
                     divide= Numberlist[i] / Numberlist[i + 1];
                     Numberlist[i] = divide;
@@ -100,7 +101,7 @@ namespace Caculator01
             }
             for (int i = 0; i < methodlist.Count; i++)//遍历所有加减法
             {
-                if (methodlist.Count != 0 && methodlist[i] == '+')//加法方法
+                if (i < methodlist.Count && methodlist[i] == '+')//加法方法
                 {
                     add= Numberlist[i] + Numberlist[i + 1];
                     Numberlist[i] = add;
@@ -112,7 +113,7 @@ namespace Caculator01
                     Numberlist.RemoveAt(Numberlist.Count-1);
                     methodlist.RemoveAt(methodlist.Count-1);
                 }
-                if (methodlist.Count != 0&&methodlist[i] == '-')//减法方法
+                if (i < methodlist.Count && methodlist[i] == '-')//减法方法
                 {
                     subtract= Numberlist[i] - Numberlist[i + 1];
                     Numberlist[i] = subtract;
@@ -212,13 +213,20 @@ namespace Caculator01
         }
         private void button4_Click(object sender, EventArgs e)
         {
-            str = textBox1.Text;
+            str = "("+textBox1.Text+")";
             Priority();
             label1.Text = str;
+            result = double.Parse(str);
         }
         private void button3_Click(object sender, EventArgs e)
         {
-
+            string path = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"/save.txt";
+            FileStream fs = new FileStream(path,FileMode.Create); //这里有个异常需要处理，使用try和catch解决文件检查问题
+            StreamWriter sw = new StreamWriter(fs);
+            sw.Write(result);
+            sw.Flush();
+            sw.Close();
+            fs.Close();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
